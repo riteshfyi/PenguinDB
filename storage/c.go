@@ -1,4 +1,4 @@
-package btree
+package storage
 
 import (
 	"unsafe"
@@ -39,10 +39,10 @@ func newC() *C {
 }
 
 func (c *C) add(key string, val string) {
-c.tree.Insert([]byte(key), []byte(val))
-c.ref[key] = val
+	c.tree.Insert([]byte(key), []byte(val))
+	c.ref[key] = val
 }
 func (c *C) del(key string) bool {
-delete(c.ref, key)
-return c.tree.Delete([]byte(key))
+	delete(c.ref, key)
+	return c.tree.Delete([]byte(key))
 }

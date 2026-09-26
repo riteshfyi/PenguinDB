@@ -1,4 +1,4 @@
-package memory
+package storage
 
 import (
 	"bytes"
@@ -8,7 +8,7 @@ import (
 )
 
 const (
-	DB_SIG = "MangekyoSharingan"
+	DB_SIG = "MiyukiShiroganeW"
 )
 
 func masterLoad(db *KV) error {
@@ -21,7 +21,7 @@ func masterLoad(db *KV) error {
 	root := binary.LittleEndian.Uint64(data[16:])
 	used := binary.LittleEndian.Uint64(data[24:])
 
-	if !bytes.Equal([]bytes(DB_SIG), data[:16]) {
+	if !bytes.Equal([]byte(DB_SIG), data[:16]) {
 		return errors.New("bag signature")
 	}
 

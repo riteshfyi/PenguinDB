@@ -1,4 +1,4 @@
-package memory
+package storage
 
 import (
 	"errors"
@@ -7,9 +7,7 @@ import (
 	"syscall"
 )
 
-const (
-	BTREE_PAGE_SIZE = 4096
-)
+
 
 func mmapInit(fp *os.File) (int, []byte, error) {
 	fi, err := fp.Stat()

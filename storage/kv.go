@@ -1,16 +1,14 @@
-package memory
+package storage
 
 import (
 	"os"
-
-	"PenguinDB/storage/btree"
 )
 
 // represents a db file
 type KV struct {
 	Path string
 	fp   *os.File
-	tree btree.BTree
+	tree BTree
 	mmap struct {
 		file   int      //file size
 		total  int      //mmap size
@@ -21,4 +19,3 @@ type KV struct {
 		temp    [][]byte //newloy allocated pages
 	}
 }
-  

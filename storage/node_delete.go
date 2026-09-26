@@ -1,4 +1,4 @@
-package btree
+package storage
 
 func leafDelete(new BNode, old BNode, idx uint16) {
 	new.setHeader(BNODE_LEAF, old.nkeys()-1)

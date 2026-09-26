@@ -1,24 +1,20 @@
-package memory
-
-import (
-	"PenguinDB/storage/btree"
-)
+package storage
 
 // callback for BTree, derefernece a pointer
-func (db *KV) pageGet(ptr uint64) btree.BNode {
+func (db *KV) pageGet(ptr uint64) BNode {
 	start := uint64(0)
 	for _, chunk := range db.mmap.chunks {
 		end := start + uint64(len(chunk))/BTREE_PAGE_SIZE
 		if ptr < end {
 			offset := BTREE_PAGE_SIZE * (ptr - start)
-			return btree.BNode{chunk[offset : offset+BTREE_PAGE_SIZE]}
+			return BNode{data: chunk[offset : offset+BTREE_PAGE_SIZE]}
 		}
 		start = end
 	}
 	panic("bad ptr")
 }
 
-func (db *KV) pageNew(node btree.BNode) uint64 {
+func (db *KV) pageNew(node BNode) uint64 {
 	//TODO : reuse deallocated pages
 	assert(len(node.data) <= BTREE_PAGE_SIZE)
 	ptr := db.page.flushed + uint64(len(db.page.temp))

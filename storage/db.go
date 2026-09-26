@@ -1,6 +1,7 @@
-package memory
+package storage
 
 import (
+	"fmt"
 	"os"
 	"syscall"
 )
@@ -28,18 +29,18 @@ func (db *KV) Open() error {
 
 	err = masterLoad(db)
 
-	err != nil {
+	if err != nil {
 		goto fail
 	}
 
-	return nil 
+	return nil
 
-fail: 
-     db.Close()
-	 return fmt.Errorf("KV.Open: %w", err)
+fail:
+	db.Close()
+	return fmt.Errorf("KV.Open: %w", err)
 }
 
-func (db *KV) Close(){
+func (db *KV) Close() {
 	for _, chunk := range db.mmap.chunks {
 		err := syscall.Munmap(chunk)
 		assert(err == nil)
@@ -48,16 +49,16 @@ func (db *KV) Close(){
 	_ = db.fp.Close()
 }
 
-func (db *KV) Get(key []byte) ([]byte,bool){
+func (db *KV) Get(key []byte) ([]byte, bool) {
 	return db.tree.Get(key)
 }
 
 func (db *KV) Set(key []byte, val []byte) error {
-db.tree.Insert(key, val)
-return flushPages(db)
+	db.tree.Insert(key, val)
+	return flushPages(db)
 }
 
 func (db *KV) Del(key []byte) (bool, error) {
-deleted := db.tree.Delete(key)
-return deleted, flushPages(db)
+	deleted := db.tree.Delete(key)
+	return deleted, flushPages(db)
 }
