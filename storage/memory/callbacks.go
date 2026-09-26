@@ -29,14 +29,20 @@ func (db *KV) pageNew(node btree.BNode) uint64 {
 func (db *KV) pageDel(ptr uint64) {
 	total := db.page.flushed + uint64(len(db.page.temp))
 	assert(ptr < total)
-	if ptr < db.page.flushed {
-		//remove from the mmap
-		offset := ptr
-		db.mmap.chunks = append(db.mmap.chunks[:offset], db.mmap.chunks[offset+1:]...) //remove the ith map in memory
-		db.page.flushed -= (offset + 1)
-	} else {
-		//remove form the temp
-		offset := ptr - db.page.flushed
-		db.page.temp = append(db.page.temp[:offset], db.page.temp[offset+1:]...)
-	}
+
+	//WRONG_IMPLEMENTATION
+	// if ptr < db.page.flushed {
+	//remove from the mmap
+	// offset := ptr
+	// db.mmap.chunks = append(db.mmap.chunks[:offset], db.mmap.chunks[offset+1:]...) //remove the ith map in memory
+	//no need to delete data, just mark it to the free list
+	//TODO: add this node to freelist, once the freelist is created.
+	// } else {
+	//remove form the temp
+	// offset := ptr - db.page.flushed
+	// db.page.temp = append(db.page.temp[:offset], db.page.temp[offset+1:]...)
+	// }
+
+	//mark this to freelist to be reused later.
+
 }
