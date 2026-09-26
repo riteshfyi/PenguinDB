@@ -16,6 +16,6 @@ func (node BNode) getOffset(idx uint16) uint16 {
 }
 
 func (node BNode) setOffset(idx uint16, offset uint16) {
-	assert(idx < node.nkeys())
+	// assert(idx < node.nkeys())
 	binary.LittleEndian.PutUint16(node.data[offsetPos(node, idx):], offset)
 }

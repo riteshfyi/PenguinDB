@@ -32,7 +32,7 @@ func (tree *BTree) Insert(key []byte, val []byte) {
 	if tree.root == uint64(0) {
 		//create a root node.
 		root := BNode{data: make([]byte, BTREE_PAGE_SIZE)}
-		root.setHeader(BNODE_LEAF, 2)
+		root.setHeader(BNODE_LEAF, uint16(2))
 		nodeAppendKV(root, 0, 0, nil, nil) //only first left node has 1 extra nil, nil KV pair
 		nodeAppendKV(root, 1, 0, key, val)
 		tree.root = tree.new(root)

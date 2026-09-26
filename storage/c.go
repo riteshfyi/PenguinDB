@@ -10,7 +10,7 @@ type C struct {
 	pages map[uint64]BNode
 }
 
-func newC() *C {
+func NewC() *C {
 	pages := map[uint64]BNode{}
 	return &C{
 		tree: BTree{
@@ -38,11 +38,21 @@ func newC() *C {
 	}
 }
 
-func (c *C) add(key string, val string) {
+func (c *C) Add(key string, val string) {
 	c.tree.Insert([]byte(key), []byte(val))
 	c.ref[key] = val
 }
-func (c *C) del(key string) bool {
+func (c *C) Del(key string) bool {
 	delete(c.ref, key)
 	return c.tree.Delete([]byte(key))
+}
+
+func (c *C) Get(key string) (string, bool) {
+	val, ok := c.tree.Get([]byte(key))
+	return string(val), ok
+}
+
+func (c *C) getRef(key string) (string, bool) {
+	val, ok := c.ref[key]
+	return val, ok
 }

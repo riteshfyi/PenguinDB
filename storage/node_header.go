@@ -11,10 +11,10 @@ func (node BNode) btype() uint16 {
 }
 
 func (node BNode) nkeys() uint16 {
-	return binary.BigEndian.Uint16(node.data[2:])
+	return binary.LittleEndian.Uint16(node.data[2:])
 }
 
 func (node BNode) setHeader(btype uint16, nkeys uint16) {
-	binary.LittleEndian.PutUint16(node.data[0:2], btype)
-	binary.LittleEndian.PutUint16(node.data[2:4], nkeys)
+	binary.LittleEndian.PutUint16(node.data[0:], btype)
+	binary.LittleEndian.PutUint16(node.data[2:], nkeys)
 }

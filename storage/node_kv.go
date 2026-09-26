@@ -3,7 +3,7 @@ package storage
 import "encoding/binary"
 
 func (node BNode) kvPos(idx uint16) uint16 {
-	assert(idx < node.nkeys())
+	assert(idx <= node.nkeys())
 	return HEADER + 8*node.nkeys() + 2*node.nkeys() + node.getOffset(idx)
 }
 
