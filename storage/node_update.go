@@ -1,7 +1,6 @@
 package storage
 
 import (
-	"bytes"
 	"encoding/binary"
 )
 
@@ -14,15 +13,23 @@ func leafInsert(new BNode, old BNode, idx uint16, key []byte, val []byte) {
 
 func leafUpdate(new BNode, old BNode, idx uint16, key []byte, val []byte) {
 	//key already exists, so just update the val. make sure to update the offsets
-	pos := old.kvPos(idx)
-	storedKey := old.getKey(idx)
+	new.setHeader(BNODE_LEAF, old.nkeys())
+	nodeAppendRange(new, old, 0, 0, idx)
+	nodeAppendKV(new, idx, 0, key, val)
+	nodeAppendRange(new, old, idx+1, idx+1, old.nkeys()-idx-1)
 
-	if bytes.Equal(storedKey, key) != true {
-		panic("invalid Node Update, Key Doesn't Exist")
-	}
-	klen := binary.LittleEndian.Uint16(old.data[pos:])
-	vlen := binary.LittleEndian.Uint16(old.data[pos+2+klen:])
-	copy(new.data[pos+2+klen+2+vlen:], val)
+	// pos := old.kvPos(idx)
+	// storedKey := old.getKey(idx)
+
+	// if bytes.Equal(storedKey, key) != true {
+	// 	panic("invalid Node Update, Key Doesn't Exist")
+	// }
+	// klen := binary.LittleEndian.Uint16(old.data[pos:])
+	// // vlen := binary.LittleEndian.Uint16(old.data[pos+2:])
+	// vlen := uint16(len(val))
+	// copy(new.data[pos+4+klen:], val)
+	// // copy(new.data[pos+2:], vlen)
+	// binary.LittleEndian.PutUint16(new.data[pos+2:], vlen)
 }
 
 func nodeAppendRange(new BNode, old BNode, dstNew uint16, srcOld uint16, n uint16) {
