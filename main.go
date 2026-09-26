@@ -8,5 +8,4 @@ type BTree = storage.BTree
 type BNode = storage.BNode
 
 func main() {
-
 }
