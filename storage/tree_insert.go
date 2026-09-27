@@ -50,7 +50,7 @@ func (tree *BTree) Insert(key []byte, val []byte) {
 		root.setHeader(BNODE_NODE, nsplit)
 
 		for i, knode := range splitted[:nsplit] {
-			ptr, key := tree.new(knode), node.getKey(0)
+			ptr, key := tree.new(knode), knode.getKey(0)
 			nodeAppendKV(root, uint16(i), ptr, key, nil)
 		}
 		tree.root = tree.new(root)
