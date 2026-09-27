@@ -8,7 +8,7 @@ import (
 )
 
 const (
-	DB_SIG = "MiyukiShiroganeW"
+	DB_SIG = "MiyukixShirogane"
 )
 
 func masterLoad(db *KV) error {
@@ -20,27 +20,30 @@ func masterLoad(db *KV) error {
 	data := db.mmap.chunks[0]
 	root := binary.LittleEndian.Uint64(data[16:])
 	used := binary.LittleEndian.Uint64(data[24:])
+	free := binary.LittleEndian.Uint64(data[32:])
 
 	if !bytes.Equal([]byte(DB_SIG), data[:16]) {
 		return errors.New("bag signature")
 	}
 
-	bad := !(1 <= used && used <= uint64(db.mmap.file/BTREE_PAGE_SIZE)) || !(0 <= root && root < used)
+	bad := !(1 <= used && used <= uint64(db.mmap.file/BTREE_PAGE_SIZE)) || (0 <= root && root < used) || (1 <= free && free <= uint64(db.mmap.file/BTREE_PAGE_SIZE))
 
 	if bad {
 		return errors.New("Bad master page")
 	}
 	db.tree.root = root
 	db.page.flushed = used
+	db.free.head = free
 	return nil
 }
 
 // update the master page
 func masterStore(db *KV) error {
-	var data [32]byte
+	var data [40]byte
 	copy(data[0:], []byte(DB_SIG))
 	binary.LittleEndian.PutUint64(data[16:], db.tree.root)
 	binary.LittleEndian.PutUint64(data[24:], db.page.flushed)
+	binary.LittleEndian.PutUint64(data[32:], db.free.head)
 
 	_, err := db.fp.WriteAt(data[:], 0)
 

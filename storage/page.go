@@ -3,7 +3,16 @@ package storage
 import "fmt"
 
 func writePages(db *KV) error {
-	npages := int(db.page.flushed) + len(db.page.temp)
+	freed := []uint64{}
+
+	for ptr, page := range db.page.updates {
+		if page == nil {
+			freed = append(freed, ptr)
+		}
+	}
+	db.free.Update(db.page.nfree, freed)
+
+	npages := int(db.page.flushed) + (db.page.nappend)
 
 	if err := extendFile(db, npages); err != nil {
 		return err
@@ -13,9 +22,11 @@ func writePages(db *KV) error {
 		return err
 	}
 
-	for i, page := range db.page.temp {
-		ptr := db.page.flushed + uint64(i)
-		copy(db.pageGet(ptr).data, page)
+	for ptr, page := range db.page.updates {
+		// ptr := db.page.flushed + uint64(i)
+		if page != nil {
+			copy(pageGetMapped(db, ptr).data, page)
+		}
 	}
 	return nil
 }
@@ -32,8 +43,10 @@ func syncPages(db *KV) error {
 	if err := db.fp.Sync(); err != nil {
 		return fmt.Errorf("fsync: %w", err)
 	}
-	db.page.flushed += uint64(len(db.page.temp))
-	db.page.temp = db.page.temp[:0]
+	db.page.flushed += uint64(db.page.nappend)
+	clear(db.page.updates)
+	db.page.nfree = 0
+	db.page.nappend = 0
 
 	if err := masterStore(db); err != nil {
 		return err
