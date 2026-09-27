@@ -27,6 +27,16 @@ func (db *KV) Open() error {
 	db.tree.new = db.pageNew
 	db.tree.del = db.pageDel
 
+	/*
+		page struct {
+			flushed uint64            //database size in number of pages
+			nfree   int               //total freelist nodes used
+			nappend int               //extra appended nodes in the memory pages
+			updates map[uint64][]byte //newloy allocated pages
+		}
+	*/
+	db.page.updates = map[uint64][]byte{}
+
 	db.free.get = db.pageGet
 	db.free.new = db.pageAppend
 	db.free.use = db.pageUse

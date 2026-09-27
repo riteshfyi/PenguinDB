@@ -8,7 +8,7 @@ import (
 )
 
 const (
-	DB_SIG = "MiyukixShirogane"
+	DB_SIG = "MIYUKI-SHIROGANE"
 )
 
 func masterLoad(db *KV) error {
@@ -26,7 +26,7 @@ func masterLoad(db *KV) error {
 		return errors.New("bag signature")
 	}
 
-	bad := !(1 <= used && used <= uint64(db.mmap.file/BTREE_PAGE_SIZE)) || (0 <= root && root < used) || (1 <= free && free <= uint64(db.mmap.file/BTREE_PAGE_SIZE))
+	bad := !(1 <= used && used <= uint64(db.mmap.file/BTREE_PAGE_SIZE)) || !(0 <= root && root < used) || !(0 <= free && free <= uint64(db.mmap.file/BTREE_PAGE_SIZE))
 
 	if bad {
 		return errors.New("Bad master page")

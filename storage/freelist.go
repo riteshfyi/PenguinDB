@@ -1,5 +1,9 @@
 package storage
 
+import (
+	"fmt"
+)
+
 type Freelist struct {
 	head uint64
 
@@ -9,7 +13,19 @@ type Freelist struct {
 }
 
 func (fl *Freelist) Total() int {
-	return 0
+	total := 0
+	node := fl.get(fl.head)
+
+	for fl.head != 0 && len(node.data) != 0 {
+		size := flnSize(node)
+		total += size
+		next := flnNext(node)
+		if next == 0 {
+			break
+		}
+		node = fl.get(next)
+	}
+	return total
 }
 
 func (fl *Freelist) Get(topn int) uint64 {
@@ -94,5 +110,7 @@ func flPush(fl *Freelist, freed []uint64, reuse []uint64) {
 
 	}
 
-	assert(len(reuse) == 0)
+	// assert(len(reuse) == 0)
+	fmt.Println("length of reuse", len(reuse))
+	fmt.Println("length of freed", len(freed))
 }

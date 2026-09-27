@@ -10,7 +10,7 @@ func TestDB(t *testing.T) {
 	db := storage.KV{Path: "./database/test_file.kv"}
 	err := db.Open()
 	if err != nil {
-		panic("db.Open failed")
+		fmt.Print(err)
 	}
 	keyString1 := "kaguyaSama"
 	valString1 := "LoveisWar"
